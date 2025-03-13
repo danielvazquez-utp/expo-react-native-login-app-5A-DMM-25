@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../components/Background'
@@ -13,16 +13,18 @@ import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
 
 
-import SelectDropdown from 'react-native-select-dropdown'
-import Ionicons from '@expo/vector-icons/Ionicons';
-
 import { useFetch } from '../hooks/useFetch';
+import { CustomDropDownList } from '../components/CustomDropDownList'
 
 export function ArticleScreen({ navigation }) {
   const [name, setName] = useState({ value: '', error: '' })
   const [lastName, setLastName] = useState({ value: '', error: '' })
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
+  const [locations, setLocations] = useState([
+    {title:'Almacen'},
+    {title:'Recepción'},
+  ]);
 
   const itemTypes = [
     {title:'Mobiliario de oficina'},
@@ -38,48 +40,28 @@ export function ArticleScreen({ navigation }) {
     {title:'Excelente estado'},
   ]
 
-  const locations = [
-    {title:'Almacen'},
-    {title:'Recepción'},
-  ]
-
   const { getData, setData } = useFetch();
 
-  const onSignUpPressed = async() => {
-    const nameError = nameValidator(name.value)
-    const lastNameError = nameValidator(lastName.value)
-    const emailError = emailValidator(email.value)
-    const passwordError = passwordValidator(password.value)
-    if (emailError || lastNameError || passwordError || nameError) {
-      setName({ ...name, error: nameError })
-      setLastName({ ...name, error: lastNameError })
-      setEmail({ ...email, error: emailError })
-      setPassword({ ...password, error: passwordError })
-      return
+  // Función para recuperar las ubicaciones
+  const getLocations = async() => {
+    const locations = await getData('http://localhost:3000/api/locations/all');
+    if (locations.error) return;
+    const { data } = locations;
+    if (data.length>0) {
+      const ubicaciones = [];
+      data.map( (location) => {
+        ubicaciones.push({
+          title: `${ location.building } - ${ location.department }`
+        })
+      });
+      setLocations(ubicaciones);
     }
-
-    const usuario = await getData('http://localhost:3000/api/users/byNick/' + email.value);
-    if (usuario.error) return;
-    const { data } = usuario;
-    if( data.length>0 ) return;
-
-    const nuevoUsuario = {
-      name: name.value,
-      lastName: lastName.value,
-      nickname: email.value,
-      password: password.value,
-      profile: 1,
-      state: 1
-    }
-
-    const nuevo = await setData('http://localhost:3000/api/users/add', nuevoUsuario );
-    if (nuevo.error) return;
-    
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Dashboard' }],
-    })
   }
+
+  useEffect(() => {
+    getLocations();
+  }, [])
+  
 
   return (
     <Background>
@@ -95,47 +77,22 @@ export function ArticleScreen({ navigation }) {
         errorText={name.error}
       />
 
-      <SelectDropdown
-        data={ itemTypes }
-        onSelect={(selectedItem, index) => {
-          console.log(selectedItem, index);
-        }}
-        renderButton={(selectedItem, isOpened) => {
-          return (
-            <View style={styles.dropdownButtonStyle}>
-              <Text style={styles.dropdownButtonTxtStyle}>
-                {(selectedItem && selectedItem.title) || 'Seleccionar tipo de artículo'}
-              </Text>
+      <CustomDropDownList items={ itemTypes } defaultText='Tipo de artículo' />
 
-              <Ionicons 
-                name={isOpened ? 'chevron-up' : 'chevron-down'} 
-                size={24} 
-                color="black" 
-                style={styles.dropdownButtonArrowStyle}
-              />
-
-            </View>
-          );
-        }}
-        renderItem={(item, index, isSelected) => {
-          return (
-            <View style={{ ...styles.dropdownItemStyle, ...(isSelected && { backgroundColor: '#D2D9DF' }) }}>
-              <Text style={styles.dropdownItemTxtStyle}>{item.title}</Text>
-            </View>
-          );
-        }}
-        showsVerticalScrollIndicator={false}
-        dropdownStyle={styles.dropdownMenuStyle}
+      <CustomDropDownList 
+        items={
+          [
+            {title: 'Malo'},
+            {title: 'Regular'},
+            {title: 'Bueno'},
+            {title: 'Excelente'},
+          ]
+        } 
+        defaultText='Estado del artículo'
       />
+      
+      <CustomDropDownList items={ locations } />
 
-      <TextInput
-        label="Apellidos"
-        returnKeyType="next"
-        value={lastName.value}
-        onChangeText={(text) => setLastName({ value: text, error: '' })}
-        error={!!lastName.error}
-        errorText={lastName.error}
-      />
       <TextInput
         label="Correo"
         returnKeyType="next"
@@ -159,7 +116,6 @@ export function ArticleScreen({ navigation }) {
       />
       <Button
         mode="contained"
-        onPress={onSignUpPressed}
         style={{ marginTop: 24 }}
       >
         Sign Up
@@ -182,50 +138,5 @@ const styles = StyleSheet.create({
   link: {
     fontWeight: 'bold',
     color: theme.colors.primary,
-  },
-  dropdownButtonStyle: {
-    width: 200,
-    height: 50,
-    backgroundColor: '#E9ECEF',
-    borderRadius: 12,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-  },
-  dropdownButtonTxtStyle: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#151E26',
-  },
-  dropdownButtonArrowStyle: {
-    fontSize: 28,
-  },
-  dropdownButtonIconStyle: {
-    fontSize: 28,
-    marginRight: 8,
-  },
-  dropdownMenuStyle: {
-    backgroundColor: '#E9ECEF',
-    borderRadius: 8,
-  },
-  dropdownItemStyle: {
-    width: '100%',
-    flexDirection: 'row',
-    paddingHorizontal: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  dropdownItemTxtStyle: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#151E26',
-  },
-  dropdownItemIconStyle: {
-    fontSize: 28,
-    marginRight: 8,
-  },
+  }
 })
