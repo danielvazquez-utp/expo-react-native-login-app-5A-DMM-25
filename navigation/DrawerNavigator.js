@@ -13,7 +13,7 @@ const Drawer = createDrawerNavigator();
 
 export const DrawerNavigator = () => {
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator initialRouteName='Items'>
         <Drawer.Screen
             name='Menu'
             component={ Dashboard }
@@ -22,7 +22,7 @@ export const DrawerNavigator = () => {
             }}
         />
         <Drawer.Screen
-            name='Articles'
+            name='Items'
             component={ ArticleScreen }
             options={{
                 title: 'Artículos'
