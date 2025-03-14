@@ -3,12 +3,19 @@ import { View, Text, StyleSheet } from 'react-native'
 import SelectDropdown from 'react-native-select-dropdown'
 import Ionicons from '@expo/vector-icons/Ionicons'
 
-export const CustomDropDownList = ({ items=[{title: 'Hola'}, {title: 'Mundo'}], defaultText='Seleccione' }) => {
+export const CustomDropDownList = ({ 
+  items=[{title: 'Hola'}, {title: 'Mundo'}], 
+  defaultText='Seleccione', 
+  error= false,
+  setValue = ()=>{}
+}) => {
     return (
+      <View>
         <SelectDropdown
             data={ items }
             onSelect={(selectedItem, index) => {
                 console.log(selectedItem, index);
+                setValue( {value:selectedItem.title, error:''} );
             }}
             renderButton={(selectedItem, isOpened) => {
                 return (
@@ -37,25 +44,32 @@ export const CustomDropDownList = ({ items=[{title: 'Hola'}, {title: 'Mundo'}], 
             showsVerticalScrollIndicator={false}
             dropdownStyle={styles.dropdownMenuStyle}
         />
+        {
+          error && 
+          <Text style={styles.error}>Seleccione una opción de la lista</Text>
+        }
+      </View>
     )
 }
 
 const styles = StyleSheet.create({
   dropdownButtonStyle: {
-    width: 200,
-    height: 50,
-    backgroundColor: '#E9ECEF',
-    borderRadius: 12,
+    width: 300,
+    height: 60,
+    backgroundColor: '#FFF',
+    borderRadius: 5,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 12,
+    borderBlockColor: "#AAA",
+    borderWidth: 1,
+    marginVertical: 10
   },
   dropdownButtonTxtStyle: {
     flex: 1,
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#151E26',
+    fontSize: 17,
+    color: '#777',
   },
   dropdownButtonArrowStyle: {
     fontSize: 28,
@@ -86,4 +100,9 @@ const styles = StyleSheet.create({
     fontSize: 28,
     marginRight: 8,
   },
+  error: {
+      fontSize: 13,
+      color: "red",
+      paddingTop: 8,
+    },
 })

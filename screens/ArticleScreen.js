@@ -12,15 +12,15 @@ import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
 
-
 import { useFetch } from '../hooks/useFetch';
 import { CustomDropDownList } from '../components/CustomDropDownList'
+import { textValidator } from '../helpers/textValidator'
+import { listValidator } from '../helpers/listValidator'
 
 export function ArticleScreen({ navigation }) {
   const [name, setName] = useState({ value: '', error: '' })
-  const [lastName, setLastName] = useState({ value: '', error: '' })
-  const [email, setEmail] = useState({ value: '', error: '' })
-  const [password, setPassword] = useState({ value: '', error: '' })
+  const [description, setDescription] = useState({ value: '', error: '' })
+  const [typeItem, setTypeItem] = useState({ value: '', error: '' })
   const [locations, setLocations] = useState([
     {title:'Almacen'},
     {title:'Recepción'},
@@ -58,6 +58,41 @@ export function ArticleScreen({ navigation }) {
     }
   }
 
+  const onRegisterPressed = async() => {
+      const nameError = textValidator(name.value)
+      const descriptionError = textValidator(description.value)
+      const typeItemError = listValidator( typeItem.value )
+
+      if (descriptionError || nameError || typeItemError ) {
+        setName({ ...name, error: nameError })
+        setDescription({ ...description, error: descriptionError })
+        setTypeItem({ ...typeItem, error: typeItemError })
+        return
+      }
+  
+      // const usuario = await getData('http://localhost:3000/api/users/byNick/' + email.value);
+      // if (usuario.error) return;
+      // const { data } = usuario;
+      // if( data.length>0 ) return;
+  
+      // const nuevoUsuario = {
+      //   name: name.value,
+      //   lastName: lastName.value,
+      //   nickname: email.value,
+      //   password: password.value,
+      //   profile: 1,
+      //   state: 1
+      // }
+  
+      // const nuevo = await setData('http://localhost:3000/api/users/add', nuevoUsuario );
+      // if (nuevo.error) return;
+      
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [{ name: 'Dashboard' }],
+      // })
+    }
+
   useEffect(() => {
     getLocations();
   }, [])
@@ -69,7 +104,7 @@ export function ArticleScreen({ navigation }) {
       <Logo />
       <Header>Agregar artículo</Header>
       <TextInput
-        label="Nombre"
+        label="Nombre del artículo"
         returnKeyType="next"
         value={name.value}
         onChangeText={(text) => setName({ value: text, error: '' })}
@@ -77,55 +112,46 @@ export function ArticleScreen({ navigation }) {
         errorText={name.error}
       />
 
-      <CustomDropDownList items={ itemTypes } defaultText='Tipo de artículo' />
+      <CustomDropDownList 
+        items={ itemTypes } 
+        defaultText='Tipo de artículo'
+        setValue={ setTypeItem }
+      />
 
       <CustomDropDownList 
-        items={
-          [
-            {title: 'Malo'},
-            {title: 'Regular'},
-            {title: 'Bueno'},
-            {title: 'Excelente'},
-          ]
-        } 
+        items={ itemState } 
         defaultText='Estado del artículo'
+        style={{
+          marginTop: 10,
+          marginBottom: 10,
+        }}
       />
       
-      <CustomDropDownList items={ locations } />
+      <CustomDropDownList 
+        items={ locations }
+        defaultText='Ubicación del artículo'
+      />
 
       <TextInput
-        label="Correo"
+        label="Descripción del artículo"
         returnKeyType="next"
-        value={email.value}
-        onChangeText={(text) => setEmail({ value: text, error: '' })}
-        error={!!email.error}
-        errorText={email.error}
+        value={description.value}
+        onChangeText={(text) => setDescription({ value: text, error: '' })}
+        error={!!description.error}
+        errorText={description.error}
         autoCapitalize="none"
-        autoCompleteType="email"
-        textContentType="emailAddress"
-        keyboardType="email-address"
+        autoCompleteType="none"
+        textContentType="none"
+        keyboardType="text"
       />
-      <TextInput
-        label="Contraseña"
-        returnKeyType="done"
-        value={password.value}
-        onChangeText={(text) => setPassword({ value: text, error: '' })}
-        error={!!password.error}
-        errorText={password.error}
-        secureTextEntry
-      />
+      
       <Button
         mode="contained"
         style={{ marginTop: 24 }}
+        onPress={()=>onRegisterPressed()}
       >
-        Sign Up
+        Agregar
       </Button>
-      <View style={styles.row}>
-        <Text>Already have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
-          <Text style={styles.link}>Login</Text>
-        </TouchableOpacity>
-      </View>
     </Background>
   )
 }
