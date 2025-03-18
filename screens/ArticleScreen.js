@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
-import { Text } from 'react-native-paper'
+import { Text, Banner } from 'react-native-paper'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
 import Header from '../components/Header'
@@ -80,14 +80,30 @@ export function ArticleScreen({ navigation }) {
 
     // ----------- registro del articulo -------------
 
+    const now = new Date();
+    const month = now.getMonth()+1;
+    let codigo = `${now.getFullYear()}${ month.toString().padStart(2, '0') }${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}`;
+    switch (itemType.value) {
+      case 'Mobiliario de oficina':
+        codigo = 'MO-' + codigo;
+        break;
+      case 'Equipo de cómputo':
+        codigo = 'EC-' + codigo;
+        break;
+      default:
+        codigo = 'OT-' + codigo;
+        break;
+    }
+
     const newItem = {
+      code: codigo,
       name: name.value,
       type: itemType.value,
       description: description.value,
       state: itemStatus.value,
       location: itemLocation.value
     }
-console.log(newItem);
+    console.log(newItem);
     const item = await setData('http://localhost:3000/api/items/add', newItem);
     console.log(item);
     if (item.error) return;
