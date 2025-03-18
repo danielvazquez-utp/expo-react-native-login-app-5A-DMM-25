@@ -6,14 +6,15 @@ import {
     LocationScreen,
     AssignmentScreen,
     InventaryScreen,
-    ScanScreen
+    ScanScreen,
+    RegisteredItemsScreen
  } from '../screens'
 
 const Drawer = createDrawerNavigator();
 
 export const DrawerNavigator = () => {
   return (
-    <Drawer.Navigator initialRouteName='Items'>
+    <Drawer.Navigator initialRouteName='regItems'>
         <Drawer.Screen
             name='Menu'
             component={ Dashboard }
@@ -25,7 +26,14 @@ export const DrawerNavigator = () => {
             name='Items'
             component={ ArticleScreen }
             options={{
-                title: 'Artículos'
+                title: 'Agregar artículo'
+            }}
+        />
+        <Drawer.Screen
+            name='regItems'
+            component={ RegisteredItemsScreen }
+            options={{
+                title: 'Artículos registrados'
             }}
         />
         <Drawer.Screen
