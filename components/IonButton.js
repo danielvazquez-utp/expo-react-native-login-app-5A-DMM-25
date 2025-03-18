@@ -8,18 +8,22 @@ export const IonButton = ({
     text='Artículos',
     textColor='white', 
     bgColor='#6929ff',
-    onPress= ()=>{}
+    onPress= ()=>{},
+    width=100,
+    height=100,
+    borderRadius=50,
+    margin=10
     }) => {
     return (
         <Pressable
             style={{
                 backgroundColor: bgColor,
-                width: 100,
-                height: 100,
+                width: width,
+                height: height,
                 justifyContent: 'center',
                 alignItems: 'center',
-                borderRadius: 50,
-                margin: 10
+                borderRadius,
+                margin: margin
             }}
             onPress={ onPress }
         >
