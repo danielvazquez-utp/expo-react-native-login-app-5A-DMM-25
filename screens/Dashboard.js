@@ -22,7 +22,7 @@ export function Dashboard({ navigation }) {
       }}>
         
         <IonButton 
-          onPress={ () => navigation.navigate('Articles') }
+          onPress={ () => navigation.navigate('Items') }
         />
         <IonButton 
           name='person' 
