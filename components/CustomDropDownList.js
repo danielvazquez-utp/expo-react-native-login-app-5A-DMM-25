@@ -19,8 +19,11 @@ export const CustomDropDownList = ({
             }}
             renderButton={(selectedItem, isOpened) => {
                 return (
-                    <View style={styles.dropdownButtonStyle}>
-                        <Text style={styles.dropdownButtonTxtStyle}>
+                    <View style={[
+                      styles.dropdownButtonStyle, 
+                      errorText ? styles.dropdownButtonStyleError : styles.dropdownButtonStyleDefault
+                    ]}>
+                        <Text style={ errorText ? styles.dropdownButtonTxtStyleError : styles.dropdownButtonTxtStyle }>
                             {(selectedItem && selectedItem.title) || defaultText }
                         </Text>
 
@@ -62,14 +65,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 12,
-    borderColor: "#AAA",
-    borderWidth: 1,
     marginVertical: 10
+  },
+  dropdownButtonStyleDefault:{
+    borderColor: "#0000008a",
+    borderWidth: 1,
+  },
+  dropdownButtonStyleError:{
+    borderColor: "#b00020",
+    borderWidth: 2,
   },
   dropdownButtonTxtStyle: {
     flex: 1,
     fontSize: 18,
     color: '#151E26',
+  },
+  dropdownButtonTxtStyleError: {
+    flex: 1,
+    fontSize: 18,
+    color: '#b00020',
   },
   dropdownButtonArrowStyle: {
     fontSize: 28,

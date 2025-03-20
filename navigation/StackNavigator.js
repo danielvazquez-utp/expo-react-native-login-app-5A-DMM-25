@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {StartScreen, Dashboard, LoginScreen, RegisterScreen, ResetPasswordScreen} from '../screens';
+import {StartScreen, Dashboard, LoginScreen, RegisterScreen, ResetPasswordScreen, EditionItemScreen} from '../screens';
 import { DrawerNavigator } from './DrawerNavigator';
 
 const Stack = createNativeStackNavigator();
@@ -19,6 +19,9 @@ const StackNavigator = () => {
         <Stack.Screen name='RegisterScreen' component={ RegisterScreen } />
         <Stack.Screen name='ResetPasswordScreen' component={ ResetPasswordScreen } />
         <Stack.Screen name='Menu' component={ DrawerNavigator } />
+
+        <Stack.Screen name='EditionItem' component={ EditionItemScreen } />
+
       </Stack.Navigator>
     </NavigationContainer>
   )
