@@ -4,7 +4,7 @@ import { List, Divider } from 'react-native-paper';
 import { useFetch } from '../hooks/useFetch';
 import { Background, BackButton, Button, Logo, Header, IonButton } from "../components"
 
-export const RegisteredItemsScreen = () => {
+export const RegisteredItemsScreen = ({ navigation }) => {
 
     const { getData } = useFetch();
     const [items, setItems] = useState([]);
@@ -52,10 +52,11 @@ export const RegisteredItemsScreen = () => {
                                                 borderRadius={10}
                                                 margin={2}
                                                 bgColor='#fc6f03'
-                                                onPress={()=>alert(item._id)}
+                                                
                                             />
                                         </View>
                                     )}
+                                    onPress={()=> navigation.navigate('EditionItem') }
                                 />
                                 <Divider />
                                 </>
@@ -72,7 +73,10 @@ export const RegisteredItemsScreen = () => {
             <Button
                 mode="contained"
                 style={{ marginTop: 24 }}
-                onPress={() => { }}
+                onPress={() => navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Menu' }],
+                  })}
             >
                 Regresar
             </Button>
