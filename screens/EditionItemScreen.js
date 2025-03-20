@@ -3,6 +3,7 @@ import { ScrollView, View, StyleSheet } from 'react-native';
 import { List, Divider } from 'react-native-paper';
 import { useFetch } from '../hooks/useFetch';
 import { Background, BackButton, Button, Logo, Header, IonButton, TextInput, CustomDropDownList } from "../components"
+import { useRoute } from '@react-navigation/native';
 
 export const EditionItemScreen = ({ navigation }) => {
 
@@ -32,6 +33,8 @@ export const EditionItemScreen = ({ navigation }) => {
     ]
 
     const { getData, setData } = useFetch();
+    const route = useRoute();
+    const { id } = route.params;
 
     // Función para recuperar las ubicaciones
     const getLocations = async () => {
@@ -47,6 +50,18 @@ export const EditionItemScreen = ({ navigation }) => {
             });
             setLocations(ubicaciones);
         }
+    }
+
+    const getItemData = async(id) => {
+        const item = await getData('http://localhost:3000/api/items/byId/' + id);
+        console.log(item);
+        if (item.error) return;
+        const {data} = item;
+        setName({value: data[0].name, error:''});
+        setDescription({value: data[0].description, error:''})
+        setItemType({value: data[0].type, error:''})
+        setItemStatus({value: data[0].state, error:''})
+        setItemLocation({value: data[0].location, error:''})
     }
 
     const onRegisterPressed = async () => {
@@ -102,6 +117,7 @@ export const EditionItemScreen = ({ navigation }) => {
 
     useEffect(() => {
         getLocations();
+        getItemData(id);
     }, [])
 
     return (
@@ -121,21 +137,21 @@ export const EditionItemScreen = ({ navigation }) => {
 
             <CustomDropDownList
                 items={itemTypes}
-                defaultText='Tipo de artículo'
+                defaultText={ itemType.value }
                 errorText={itemType.error}
                 setValue={setItemType}
             />
 
             <CustomDropDownList
                 items={ itemState }
-                defaultText='Estado del artículo'
+                defaultText={ itemStatus.value }
                 errorText={itemStatus.error}
                 setValue={setItemStatus}
             />
 
             <CustomDropDownList
                 items={locations}
-                defaultText='Ubicación del artículo'
+                defaultText={ itemLocation.value }
                 errorText={itemLocation.error}
                 setValue={setItemLocation}
             />
