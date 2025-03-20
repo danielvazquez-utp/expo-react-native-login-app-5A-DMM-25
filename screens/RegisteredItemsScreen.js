@@ -56,7 +56,11 @@ export const RegisteredItemsScreen = ({ navigation }) => {
                                             />
                                         </View>
                                     )}
-                                    onPress={()=> navigation.navigate('EditionItem') }
+                                    onPress={()=> navigation.navigate('EditionItem',
+                                        {
+                                            id: item._id
+                                        }
+                                    ) }
                                 />
                                 <Divider />
                                 </>
